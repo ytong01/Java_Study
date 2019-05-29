@@ -13,6 +13,9 @@
         <module>aop</module>
         <module>guava</module>
         <module>cache</module>
+        <module>hash</module>
+        <module>stream</module>
+        <module>common</module>
     </modules>
 
     <dependencies>
