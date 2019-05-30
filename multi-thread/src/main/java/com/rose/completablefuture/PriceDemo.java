@@ -46,17 +46,17 @@ public class PriceDemo {
 
     public static void main(String[] args) {
         PriceDemo priceDemo = new PriceDemo();
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 1; i++) {
             priceDemo.shops.add(new Shop("shop" + i));
         }
         Long start = System.currentTimeMillis();
-        System.out.println(priceDemo.findPrices("苹果x"));
+        System.out.println(priceDemo.findPrices2("苹果x"));
         System.out.println("服务耗时：" + (System.currentTimeMillis() - start));
     }
 
     public List<String> findPrices2(String product) {
         Executor executor = Executors.newCachedThreadPool();
-        List<CompletableFuture<String>> priceFuture = shops.stream()
+        List<CompletableFuture<Quote>> priceFuture = shops.stream()
                 .map(new Function<Shop, CompletableFuture<Quote>>() {
                     @Override
                     public CompletableFuture<Quote> apply(Shop shop) {
@@ -70,7 +70,7 @@ public class PriceDemo {
                                 .thenCombine(CompletableFuture.supplyAsync(new Supplier<Double>() {
                                     @Override
                                     public Double get() {
-                                        return ExchangeDemo.getRate("USD", "CNY");
+                                        return ExchangeDemo.getRate("USA", "CNY");
                                     }
                                 }), new BiFunction<Double, Double, Quote>() {
                                     @Override
@@ -80,13 +80,15 @@ public class PriceDemo {
                                 });
                         return quoteCompletableFuture;
                     };
-                }).map(new Function<CompletableFuture<String>, Object>() {
-                    @Override
-                    public Object apply(CompletableFuture<String> future) {
-                        return null;
-                    }
                 }).collect(Collectors.toList());
-        return priceFuture.stream().map(CompletableFuture::join).collect(Collectors.toList());
+
+        return priceFuture.stream().map(new Function<CompletableFuture<Quote>, String>() {
+            @Override
+            public String apply(CompletableFuture<Quote> future) {
+                Quote quote = future.join();
+                return String.format("%s price is %.2f ", quote.getShop().getName(), quote.getPrice() * quote.getDiscount().getPercent());
+            }
+        }).collect(Collectors.toList());
     }
 
 }
