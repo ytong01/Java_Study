@@ -16,6 +16,7 @@
         <module>hash</module>
         <module>stream</module>
         <module>common</module>
+        <module>io</module>
     </modules>
 
     <dependencies>

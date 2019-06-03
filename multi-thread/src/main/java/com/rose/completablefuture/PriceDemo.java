@@ -1,7 +1,5 @@
 package com.rose.completablefuture;
 
-import com.sun.org.apache.xpath.internal.operations.Quo;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
